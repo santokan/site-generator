@@ -3,17 +3,23 @@ from htmlnode import HTMLNode
 
 
 class TestHTMLNode(unittest.TestCase):
-    def test_htmlnode_props_to_html(self):
+    def test_props_to_html_no_props(self):
+        node = HTMLNode(props=None)
+        self.assertEqual(node.props_to_html(), "")
+
+    def test_props_to_html_single_prop(self):
+        node = HTMLNode(props={"class": "test-class"})
+        self.assertEqual(node.props_to_html(), ' class="test-class"')
+
+    def test_props_to_html_multiple_props(self):
         node = HTMLNode(
-            "a", {"href": "https://example.com"}, ["Example"], {"class": "link"}
+            props={"id": "test-id", "class": "test-class", "data-role": "test-role"}
         )
-        expected_html = '<a href="https://example.com" class="link">Example</a>'
-        self.assertEqual(node.props_to_html(), expected_html)
+        self.assertEqual(
+            node.props_to_html(),
+            ' id="test-id" class="test-class" data-role="test-role"',
+        )
 
-        node = HTMLNode("div", {"id": "main"}, ["Content"], {"class": "container"})
-        expected_html = '<div id="main" class="container">Content</div>'
-        self.assertEqual(node.props_to_html(), expected_html)
 
-        node = HTMLNode("p", {"class": "paragraph"}, ["This is a paragraph."], {})
-        expected_html = '<p class="paragraph">This is a paragraph.</p>'
-        self.assertEqual(node.props_to_html(), expected_html)
+if __name__ == "__main__":
+    unittest.main()
