@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -48,6 +48,36 @@ class TestHTMLNode(unittest.TestCase):
             node.__repr__(),
             "HTMLNode(p, What a strange world, children: None, {'class': 'primary'})",
         )
+
+
+class TestLeafNode(unittest.TestCase):
+    def test_create_leafnode_with_value_no_tag(self):
+        node = LeafNode(value="Hello, World!")
+        self.assertEqual(node.value, "Hello, World!")
+        self.assertIsNone(node.tag)
+        self.assertIsNone(node.children)
+        self.assertIsNone(node.props)
+
+    def test_create_leafnode_with_value_and_tag(self):
+        node = LeafNode(tag="p", value="Hello, World!")
+        self.assertEqual(node.value, "Hello, World!")
+        self.assertEqual(node.tag, "p")
+        self.assertIsNone(node.children)
+        self.assertIsNone(node.props)
+
+    def test_to_html_with_value_no_tag(self):
+        node = LeafNode(value="Hello, World!")
+        self.assertEqual(node.to_html(), "Hello, World!")
+
+    def test_to_html_with_value_and_tag(self):
+        node = LeafNode(tag="p", value="Hello, World!")
+        self.assertEqual(node.to_html(), "<p>Hello, World!</p>")
+
+    def test_to_html_without_value_raises_valueerror(self):
+        node = LeafNode(tag="p", value="Valid value")
+        node.value = None
+        with self.assertRaises(ValueError):
+            node.to_html()
 
 
 if __name__ == "__main__":
