@@ -3,6 +3,7 @@ from inline_md import (
     split_nodes_delimiter,
     split_nodes_image,
     split_nodes_link,
+    text_to_textnodes,
     extract_markdown_images,
     extract_markdown_links,
 )
@@ -155,19 +156,39 @@ class TestInlineMarkdown(unittest.TestCase):
 
     def test_split_links(self):
         node = TextNode(
-            "This is text with a [link](https://boot.dev) and [another link](https://blog.boot.dev) with text that follows",
+            "This is text with a [link](https://santa.kral) and [another link](https://blog.santa.kral) with text that follows",
             TextType.TEXT,
         )
         new_nodes = split_nodes_link([node])
         self.assertListEqual(
             [
                 TextNode("This is text with a ", TextType.TEXT),
-                TextNode("link", TextType.LINK, "https://boot.dev"),
+                TextNode("link", TextType.LINK, "https://santa.kral"),
                 TextNode(" and ", TextType.TEXT),
-                TextNode("another link", TextType.LINK, "https://blog.boot.dev"),
+                TextNode("another link", TextType.LINK, "https://blog.santa.kral"),
                 TextNode(" with text that follows", TextType.TEXT),
             ],
             new_nodes,
+        )
+
+    def test_text_to_textnodes(self):
+        nodes = text_to_textnodes(
+            "This is **text** with an *italic* word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://santa.kral)"
+        )
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://santa.kral"),
+            ],
+            nodes,
         )
 
 
