@@ -1,28 +1,29 @@
-from textnode import TextNode, TextType
-from htmlnode import HTMLNode, LeafNode, ParentNode
+import os
+import shutil
+
+from copystatic import copy_files_recursive
+from gencontent import generate_page
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+dir_path_content = "./content"
+template_path = "./template.html"
 
 
 def main():
-    text_node = TextNode("Hello", TextType.NORMAL, "https://example.com")
-    html_node = HTMLNode(
-        "a", None, None, {"href": "https://www.google.com", "target": "_blank"}
-    )
-    leaf_node = LeafNode("p", "This is a paragraph of text.")
-    print(text_node.__repr__())
-    print(html_node.__repr__())
-    print(html_node.props_to_html())
-    print(leaf_node.to_html())
-    node = ParentNode(
-        "p",
-        [
-            LeafNode("b", "Bold text"),
-            LeafNode(None, "Normal text"),
-            LeafNode("i", "italic text"),
-            LeafNode(None, "Normal text"),
-        ],
-    )
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
 
-    print(node.to_html())
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
+
+    print("Generating page...")
+    generate_page(
+        os.path.join(dir_path_content, "index.md"),
+        template_path,
+        os.path.join(dir_path_public, "index.html"),
+    )
 
 
 if __name__ == "__main__":
