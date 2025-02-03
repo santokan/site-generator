@@ -26,7 +26,6 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(md)
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html)
-    print(template)
 
     dest_dir_path = os.path.dirname(dest_path)
     if dest_dir_path != "":
@@ -34,3 +33,14 @@ def generate_page(from_path, template_path, dest_path):
     to_file = open(dest_path, "w")
     to_file.write(template)
     to_file.close()
+
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for root, _, files in os.walk(dir_path_content):
+        for file in files:
+            if file.endswith(".md"):
+                from_path = os.path.join(root, file)
+                dest_path = os.path.join(
+                    dest_dir_path, from_path[len(dir_path_content) + 1 : -3] + ".html"
+                )
+                generate_page(from_path, template_path, dest_path)
